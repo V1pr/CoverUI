@@ -18,6 +18,7 @@ This repository contains the firmware files required to use the mowers CoverUI (
    4. SA/SC/NX Type (9 Buttons, 11 LEDs), PCB labeled with RM-ECOW-V1.1.0 (GD32 MCU tested)
    5. NX100i (18 Buttons, 3 LEDs, 256*64 Pixel LC-Display), PCB labeled with RM-EC3-V1.1 (STM32 MCU tested)
    6. SAxPro (Rev6) 6 Buttons 240*128 Pixel LC-Display (STM32 MCU tested)
+   7. LegacyHAT, a HAT addon for non-uC original CoverUI (9 Buttons, 11 LEDs), HAT uses an STM32F4xx "black pill" (mind the pill size!) - UNTESTED (yet!)
    
     For this, you need to solder some cables and flash a modified firmware to it.<br>
     Please check the detailed [Stock CoverUI Readme](Firmware/CoverUI/YardForce/README.md) (as you've also the option to use your stock hall, Stop and rain cables).
