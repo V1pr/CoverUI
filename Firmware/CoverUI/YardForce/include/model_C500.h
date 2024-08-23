@@ -14,6 +14,10 @@
 #include "model/LEDcontrol_C500.hpp"
 #include "model/buttons_C500.h"
 
+#ifdef MOD_RAIN
+#include "model/Rain_C500.hpp"
+#endif
+
 #ifdef MOD_EMERGENCY
 #include "model/emergency_C500.h"
 #endif

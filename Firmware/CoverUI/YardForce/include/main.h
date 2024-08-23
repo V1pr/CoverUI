@@ -32,6 +32,8 @@
 #include "model_RM-EC3-V11.h"
 #elif defined(MDL_SAXPRO)
 #include "model_SAxPRO.h"
+#elif defined(MDL_LEGACYHAT)
+#include "model_LEGACYHAT.h"
 #else
 #pragma GCC error "Missing model header!"
 #include <AbortCompile>

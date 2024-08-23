@@ -18,19 +18,17 @@
  * STM32F030 | 812-883 |  ~ 730    |  ~ 300  |         |       |
  * GD32F330  | 930-950 | 928-932   | 350-387 | 445-466 | >800  |
  */
-#ifndef YARDFORCE_RAIN_H
-#define YARDFORCE_RAIN_H
+#ifndef YARDFORCE_C500_RAIN_H
+#define YARDFORCE_C500_RAIN_H
 
 #include <Arduino.h>
-#include "../../BttnCtl.h"
+#include "../Rain.hpp"
 
-//#define PIN_RAIN PB1             // Need to be soldered with a cable bridge from FB2/JP2 to R79/PB1
+#define PIN_RAIN PB1             // Need to be soldered with a cable bridge from FB2/JP2 to R79/PB1
 #define RAIN_ADC_THRESHOLD 700   // Why a threshold? Cause it could be made configurable on (Stock-)CoverUI (if i.e. required due to inaccuracy)
 #define RAIN_PROCESS_PERIOD 5000 // c.ez proposed "once a second or every 10 seconds"
 
-extern void sendMessage(void *message, size_t size);
-
-class Rain
+class RainC500 : public Rain
 {
 private:
     uint32_t next_period_ = 0;
@@ -41,19 +39,9 @@ public:
      * @brief Read ADC of rain-sensor (with previous C8 charge impulse)
      *
      */
-    virtual void read();
-
-    /**
-     * @brief Send 'rain' message via COBS with last read rain-sensor- value (together with (currently static) threshold)
-     *
-     */
-    void send();
-
-    /**
-     * @brief Process (read & send) rain-sensor- value together with (currently static) threshold
-     *
-     */
-    void process();
+    void read() override;
 };
 
-#endif /* YARDFORCE_RAIN_H */
+extern RainC500 rain;
+
+#endif /* YARFORCE_C500_RAIN_H */

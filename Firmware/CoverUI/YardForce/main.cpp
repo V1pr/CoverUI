@@ -73,11 +73,6 @@ void timer_fast_callback_wrapper();
 void timer_event_callback_wrapper();
 void timer_quick_callback_wrapper();
 
-// YardForce implementation specific
-#ifdef MOD_RAIN
-Rain rain;
-#endif
-
 #ifdef MCU_STM32
 HardwareSerial serial_ll(UART_LL_RX, UART_LL_TX); // Serial connection to LowLevel MCU, JP2 Pin 1+3
 #else                                             // MCU_GD32
