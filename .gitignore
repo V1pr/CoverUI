@@ -31,3 +31,4 @@ Firmware/CoverUI/.pio/*
 
 # In my opinion these should not be in repository
 Firmware/CoverUI/.vscode/*
+Hardware/CoverUI-legacy-LedPanel-HAT/Legacy-LedPanel-HAT/~Legacy-LedPanel-HAT.kicad_sch.lck
