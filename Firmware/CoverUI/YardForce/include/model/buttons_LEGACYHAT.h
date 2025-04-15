@@ -30,7 +30,7 @@ S9 - S2
 #define BTN_S2_PIN PB3
 #define BTN_PLAY_PIN PB5
 #define BTN_HOME_PIN PA12
-#define BTN_LOCK_PIN PA5 // lock icon
+#define BTN_LOCK_PIN PB4 // lock icon
 
 //#define BTN_MENU_PIN PB4
 

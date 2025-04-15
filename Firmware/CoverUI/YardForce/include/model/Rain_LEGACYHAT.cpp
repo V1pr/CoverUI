@@ -20,6 +20,7 @@
  */
 
 #include <Arduino.h>
+#include "../model_LEGACYHAT.h"
 #include "Rain_LEGACYHAT.hpp"
 
     /**
@@ -31,6 +32,17 @@
         pinMode(PIN_RAIN, INPUT_PULLUP); // Charge C8 (FB1+FB2)
         delay(1);                        // Need a consistent delay for our different MCU clocks
         val_ = analogRead(PIN_RAIN);
+
+        // LED_NUM 11 = LED_PIN_LOCK
+        if ( val_ > RAIN_ADC_THRESHOLD ) {    
+            leds.set(11, LED_on);
+        } else if ( val_ > ( RAIN_ADC_THRESHOLD / 2 ) ) {    
+            leds.set(11, LED_blink_fast);
+        } else if ( val_ > ( RAIN_ADC_THRESHOLD / 3 ) ) {
+            leds.set(11, LED_blink_slow);
+        } else {
+            leds.set(11, LED_off);
+        }
     }
 
 RainLEGACYHAT rain;
