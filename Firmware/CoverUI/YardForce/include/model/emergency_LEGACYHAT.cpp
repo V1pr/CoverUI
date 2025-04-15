@@ -20,8 +20,12 @@ const EmergencyPinStateDef kEmergencyPinStateDefs[] = {
     {PIN_HALL4, INPUT_PULLUP, Emergency_state::Emergency_lift2},
 #endif
 #ifdef MOD_STOP
-    {PIN_STOP1, INPUT_PULLUP, Emergency_state::Emergency_stop1},
-    {PIN_STOP2, INPUT_PULLUP, Emergency_state::Emergency_stop2},
+    {PIN_ESTOP1, INPUT_PULLUP, Emergency_state::Emergency_stop1},
+    {PIN_ESTOP2, INPUT_PULLUP, Emergency_state::Emergency_stop2},
+    {PIN_HANDLE_BTN_1, INPUT, Emergency_state::Emergency_handle},
+    #ifdef PIN_HANDLE_BTN_2
+    {PIN_HANDLE_BTN_2, INPUT, Emergency_state::Emergency_handle},
+    #endif
 #endif
 };
 

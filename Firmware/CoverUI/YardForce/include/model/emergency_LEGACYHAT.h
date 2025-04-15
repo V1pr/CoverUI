@@ -15,8 +15,11 @@
 #include <Arduino.h>
 #include "../Emergency.hpp"
 
-#define PIN_STOP1 PB12 // ESTOP1
-#define PIN_STOP2 PB13 // ESTOP2
+#define PIN_ESTOP1 PB12 // ESTOP1 from original CoverUI
+#define PIN_ESTOP2 PB13 // ESTOP2 from original CoverUI
+
+#define PIN_HANDLE_BTN_1 PA8 // Handle Button1
+#define PIN_HANDLE_BTN_2 PA11 // Handle Button2 (if not serial connected with Button1)
 
 #define PIN_HALL1 PB6 // LiftX
 #define PIN_HALL2 PA9 // Left bumper

@@ -29,7 +29,8 @@ enum Emergency_state
     Emergency_stop1 = 0b00010,
     Emergency_stop2 = 0b00100,
     Emergency_lift1 = 0b01000,
-    Emergency_lift2 = 0b10000
+    Emergency_lift2 = 0b10000,
+    Emergency_handle = 0b00110 // same value as stop1&stop2 for now
 };
 
 // CoverUI subscription topic_bitmask
