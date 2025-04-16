@@ -34,14 +34,10 @@
 #elif defined(MDL_SAXPRO)
 #include "../model/SAxPRO/assembly.hpp"
 #elif defined(MDL_LEGACYHAT)
-#include "model_LEGACYHAT.h"
+#include "../model/LegacyHAT/assembly.hpp"
 #else
 #pragma GCC error "Missing model header!"
 #include <AbortCompile>
-#endif
-
-#ifdef MOD_RAIN
-#include "Rain.hpp"
 #endif
 
 #define BATT_ABS_MAX 28.7f

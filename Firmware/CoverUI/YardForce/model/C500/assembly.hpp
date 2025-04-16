@@ -67,6 +67,11 @@
 #define PIN_HALL_WHEEL_RED PB7
 #define PIN_HALL_WHEEL_BLUE PB8
 
+#define PIN_RAIN PB1             // Need to be soldered with a cable bridge from FB2/JP2 to R79/PB1
+#define RAIN_ADC_THRESHOLD 700   // Why a threshold? Cause it could be made configurable on (Stock-)CoverUI (if i.e. required due to inaccuracy)
+#define RAIN_PROCESS_PERIOD 5000 // c.ez proposed "once a second or every 10 seconds"
+
+
 extern LEDcontrolC500 leds;
 
 class ButtonsC500 : public Buttons {
@@ -90,6 +95,10 @@ class ButtonsC500 : public Buttons {
     };
 };
 extern ButtonsC500 buttons;
+
+#ifdef MOD_RAIN
+#include "../../include/Rain.hpp"
+#endif
 
 // LowLevel Serial Pins
 #define UART_LL_RX PA3

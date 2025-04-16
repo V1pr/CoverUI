@@ -24,9 +24,9 @@
 #include <Arduino.h>
 #include "../../BttnCtl.h"
 
-//#define PIN_RAIN PB1             // Need to be soldered with a cable bridge from FB2/JP2 to R79/PB1
-#define RAIN_ADC_THRESHOLD 700   // Why a threshold? Cause it could be made configurable on (Stock-)CoverUI (if i.e. required due to inaccuracy)
-#define RAIN_PROCESS_PERIOD 5000 // c.ez proposed "once a second or every 10 seconds"
+// #define PIN_RAIN PB1             // Need to be soldered with a cable bridge from FB2/JP2 to R79/PB1
+// #define RAIN_ADC_THRESHOLD 700   // Why a threshold? Cause it could be made configurable on (Stock-)CoverUI (if i.e. required due to inaccuracy)
+// #define RAIN_PROCESS_PERIOD 5000 // c.ez proposed "once a second or every 10 seconds"
 
 extern void sendMessage(void *message, size_t size);
 
@@ -41,19 +41,39 @@ public:
      * @brief Read ADC of rain-sensor (with previous C8 charge impulse)
      *
      */
-    virtual void read();
+    void read()
+    {
+        pinMode(PIN_RAIN, INPUT_PULLUP); // Charge C8 (FB1+FB2)
+        delay(1);                        // Need a consistent delay for our different MCU clocks
+        val_ = analogRead(PIN_RAIN);
+    }
 
     /**
      * @brief Send 'rain' message via COBS with last read rain-sensor- value (together with (currently static) threshold)
      *
      */
-    void send();
+    void send()
+    {
+        msg_event_rain msg = {
+            .type = Get_Rain,
+            .value = val_,
+            .threshold = RAIN_ADC_THRESHOLD};
+        sendMessage(&msg, sizeof(msg));
+    }
 
     /**
      * @brief Process (read & send) rain-sensor- value together with (currently static) threshold
      *
      */
-    void process();
+    void process()
+    {
+        if (millis() < next_period_)
+            return;
+
+        next_period_ += RAIN_PROCESS_PERIOD;
+        read();
+        send();
+    }
 };
 
 #endif /* YARDFORCE_RAIN_H */
