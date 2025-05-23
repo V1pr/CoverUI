@@ -1,0 +1,40 @@
+[platformio]
+src_dir = .
+
+
+[env:blackpill_f401cc]
+platform = ststm32
+board = blackpill_f401cc
+framework = arduino
+upload_protocol = dfu
+lib_deps =
+  etlcpp/Embedded Template Library @ ^20.39.4
+
+build_src_filter =
+  +<*>
+  -<.git/>
+  -<build/>
+  -<buttonscan.cpp>
+  -<LEDcontrol.cpp>
+  -<Rain.cpp>
+  -<statemachine.cpp>
+  +<YardForce/>
+  -<YardForce/CortexMCycleCounter.cpp>
+  -<YardForce/subscription.cpp>
+  -<YardForce/ST75256.cpp>
+  -<YardForce/UC1698.cpp>
+  -<YardForce/util/>
+  -<YardForce/include/model/>
+  -<YardForce/model/>
+  -<YardForce/Widget*>
+  -<YardForce/assets/>
+  +<YardForce/model/LegacyHAT/>
+
+build_flags =
+  -DHW_YF
+  -DMDL_LEGACYHAT
+  -DMCU_STM32
+  -DMOD_STOP
+  -DUSBCON
+  -DUSBD_USE_CDC
+monitor_speed = 115200 

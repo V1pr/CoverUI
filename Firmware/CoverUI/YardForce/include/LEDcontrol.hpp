@@ -20,7 +20,7 @@
 
 #define LED_NUM_OM_MAX 17  // Highest LED num controlled by OM LL FW
 
-// Some handy LED-num defines
+// Some handy LED-num defines - these are indexes for kPinByLedNum (?)
 #define LED_NUM_CHARGE 0
 #define LED_NUM_BAT 1
 #define LED_NUM_WIRE 2
@@ -58,11 +58,13 @@ class LEDcontrol {
     void toggle(uint8_t led_num, bool change_state = true);                                     // Set any of known LED_state states for a specific LED
 
     virtual unsigned int boot_animation() { return 0; };  // A short boot animation which return the amount of ms it will take
+    virtual unsigned int KITT_animation() { return 0; };  // A short boot animation which return the amount of ms it will take
 
     // ***** Sequence stuff *****
     void process_sequence();                                                         // Called by timer for LED sequences like animation or FW version display
     void sequence_start(void (LEDcontrol::*handler)(), bool abort_running = false);  // Start the given sequence method
     virtual void sequence_animate_handler() {};                                      // A short LED Animation handler
+    virtual void sequence_kitt_animate_handler() {};                                      // A short LED Animation handler
     virtual void sequence_countdown_handler() {};                                    // A short LED Countdown handler
     void show_num(uint16_t);                                                         // Display a number via Mon-Sun + Lifted LED
 

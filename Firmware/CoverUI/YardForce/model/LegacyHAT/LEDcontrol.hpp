@@ -15,11 +15,13 @@
 
 #include "../../include/LEDcontrol.hpp"
 
-#define LED_ANIMATE_DELAY 50  // Delay (ms) between LEDs of animate sequence (boot/power-on anim)
+#define LED_ANIMATE_DELAY 80  // Delay (ms) between LEDs of animate sequence (boot/power-on anim)
 
 // These constants should be declared i.e. in assembly.cpp
 extern const unsigned int kNumFrontLeds;
 extern const unsigned int kLedAnimOrder[];
+extern const unsigned int kNumKITTLeds;
+extern const unsigned int kLedKITTAnimOrder[];
 extern const uint8_t kBase10Leds[];
 
 class LEDcontrolLegacyHAT : public LEDcontrol {
@@ -31,7 +33,6 @@ class LEDcontrolLegacyHAT : public LEDcontrol {
      */
     void sequence_animate_handler() override {
         uint16_t step = seq_get_next_step_(LED_ANIMATE_DELAY);  // Animation sequence runs in 15ms steps
-
         if (step == 0)  // Next sequence step not reached now
             return;
         else if (step >= 1 && step <= kNumFrontLeds) {  // LED on
@@ -46,6 +47,34 @@ class LEDcontrolLegacyHAT : public LEDcontrol {
             return;
         }
     }
+
+    /**
+     * @brief K.I.T.T animate sequence handler. Has to be started by sequence_start()
+     */
+    void sequence_kitt_animate_handler() override {
+        uint16_t step = seq_get_next_step_(LED_ANIMATE_DELAY);  // Animation sequence runs in 15ms steps
+
+        if (step == 0)  // Next sequence step not reached now
+            return;
+        else if (step >= 1 && step <= kNumKITTLeds ) {
+            if ( step <= kNumKITTLeds) {
+                set(kLedKITTAnimOrder[step - 1], LED_state::LED_on, false);
+            }
+            if ( step > 1 ) {
+                set(kLedKITTAnimOrder[step - 2], LED_state::LED_off, false);
+            }
+            return;
+        } else {
+        //if (step >= (kNumKITTLeds + 1) ) {  // last LED off
+            set(kLedKITTAnimOrder[step - 1], LED_state::LED_off, false);
+        //    return;
+        //} else {
+            seq_start_tick_ = 0;   // Sequence end
+            set(led_states_bin_);  // Restore states
+            return;
+        }
+    }
+
 
     void show_countdown_state(unsigned int sec, LED_state state) {
         unsigned int sec_left = 5 - sec;
@@ -91,8 +120,22 @@ class LEDcontrolLegacyHAT : public LEDcontrol {
      */
     unsigned int boot_animation()  // A short boot animation which return the amount of ms it will take
     {
+        #ifdef USBD_USE_CDC
+        Serial.println("SS ");
+        #endif
         sequence_start(&LEDcontrol::sequence_animate_handler);
         return ((kNumFrontLeds + 1) * LED_ANIMATE_DELAY);
+    }
+
+    /**
+     * @brief "Knight-Rider KITT" animation, displayed while waiting for first input from ROS
+     *
+     * @return unsigned int ms how long it will take to play
+     */
+    unsigned int KITT_animation()  // A short boot animation which return the amount of ms it will take
+    {
+        sequence_start(&LEDcontrol::sequence_kitt_animate_handler);
+        return ((kNumKITTLeds + 1) * LED_ANIMATE_DELAY);
     }
 
     /**

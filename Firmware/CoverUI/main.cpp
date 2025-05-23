@@ -1,5 +1,5 @@
 // control to print out serial information in debug state via usb serial
-#define _serial_debug_
+// #define _serial_debug_
 
 #include <stdio.h>
 
@@ -8,6 +8,7 @@
 
 #ifdef HW_YF // Stock YardForce HardWare
 #include "YardForce/include/main.h"
+extern bool first_byte_recv;
 #else // OM's Pico based HardWare
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
@@ -262,6 +263,9 @@ void getDataFromBuffer()
     }
     if (readbyte == 0)
     {
+      #ifdef HW_YF
+        first_byte_recv = true;
+      #endif
       // we have found the packet marker, notify the other core
       PacketReceived();
       write = 0;

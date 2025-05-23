@@ -37,12 +37,14 @@ const uint32_t kPinByLedNum[] = {
     LED_PIN_8HR,    // 15    6HR       digit 2
     LED_PIN_6HR,    // 16    4HR       digit 1
     LED_PIN_4HR,    // 17    2HR       digit 0
-    LED_PIN_NC,    // 18
+    LED_PIN_LOCK,    // 18 - LED_NUM_REAR ID, we use lock led for the i'm alive status
     LED_PIN_NC    // 19
 };
 
 const unsigned int kLedAnimOrder[] = {3, 2, 1, 0, 17, 16, 15, 14, 13, 12, 11};
+const unsigned int kLedKITTAnimOrder[] = {17, 16, 15, 14, 14, 15, 16, 17};
 const unsigned int kNumFrontLeds = sizeof(kLedAnimOrder) / sizeof(unsigned int);
+const unsigned int kNumKITTLeds = sizeof(kLedKITTAnimOrder) / sizeof(unsigned int);
 
 // Numeric (base10) representation of LEDs.
 // I.e. Digit 0 = 4H(0), ... Then S2(5) + S1(4) = 9.
@@ -87,7 +89,7 @@ ButtonsLegacyHAT buttons(kBtnDefByButtonNumMap);
 
 // ----- Emergency -----
 const Emergency::PinStateDef kEmergencyPinStateDefs[] = {
-    #ifdef MOD_HALL
+#ifdef MOD_HALL
     {PIN_HALL1, INPUT_PULLUP, Emergency_state::Emergency_lift1},
     {PIN_HALL2, INPUT_PULLUP, Emergency_state::Emergency_lift1},
     {PIN_HALL3, INPUT_PULLUP, Emergency_state::Emergency_lift2},
@@ -95,10 +97,10 @@ const Emergency::PinStateDef kEmergencyPinStateDefs[] = {
 #endif
 #ifdef MOD_STOP
     {PIN_ESTOP1, INPUT_PULLUP, Emergency_state::Emergency_stop1},
-    {PIN_ESTOP2, INPUT_PULLUP, Emergency_state::Emergency_stop2},
-    {PIN_HANDLE_BTN_1, INPUT, Emergency_state::Emergency_handle},
+    {PIN_ESTOP2, INPUT_PULLUP, Emergency_state::Emergency_stop1},
+    {PIN_HANDLE_BTN_1, INPUT_PULLUP, Emergency_state::Emergency_stop2},
     #ifdef PIN_HANDLE_BTN_2
-    {PIN_HANDLE_BTN_2, INPUT, Emergency_state::Emergency_handle},
+    {PIN_HANDLE_BTN_2, INPUT_PULLUP, Emergency_state::Emergency_stop2},
     #endif
 #endif
 };

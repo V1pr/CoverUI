@@ -101,6 +101,11 @@ class Emergency {
         next_periodic_cycle = millis() + PERIODIC_SEND_CYCLE;
     }
 
+    // for testing
+    uint8_t get_state() {
+        return state_;
+    }
+
    private:
     volatile uint32_t next_periodic_cycle = PERIODIC_SEND_CYCLE;
     volatile uint8_t state_ = 0;   // Current emergency state, set by read()

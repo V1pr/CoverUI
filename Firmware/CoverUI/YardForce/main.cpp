@@ -8,10 +8,22 @@
  * @copyright Copyright (c) 2023
  *
  */
+
 #include "include/main.h"
+#include "include/Emergency.hpp"
 
 #include <Arduino.h>        // Stock CoverUI is build now via Arduino framework (instead of HAL), which is ATM the only framework with STM32F030R8 and GD32F330R8 support
 #include <HardwareTimer.h>  // Required for framework-arduinogd32
+
+#ifdef SEMIHOSTING
+#include <stdio.h> 
+extern "C" int _write(int file, char *ptr, int len) {
+  for (int i = 0; i < len; i++) {
+    Serial.write(ptr[i]);
+  }
+  return len;
+}
+#endif
 
 // ----- Timer -----
 #ifdef MCU_STM32
@@ -86,7 +98,27 @@ HardwareSerial serial_ll(UART_LL_RX, UART_LL_TX);  // Serial connection to LowLe
 HardwareSerial serial_ll((uint8_t)UART_LL_RX, (uint8_t)UART_LL_TX, 1);  // Serial connection to LowLevel MCU, J6/JP2 Pin 1+3
 #endif
 
+bool first_byte_recv = false;
+
 void setup() {
+
+  delay(1000); // give host time to detect USB
+
+  Serial.begin(115200);
+  while (!Serial) {
+    delay(100);
+  }
+
+  // Set up printf redirection
+  //fdev_setup_stream(&serial_stdout, serial_putc, NULL, _FDEV_SETUP_WRITE);
+  //stdout = &serial_stdout;
+
+  // Let USB settle before starting timers or peripherals
+  delay(500);
+
+  Serial.println("USB CDC ready on Black Pill!");
+  printf("Semihost after CDC\n");
+
 #ifdef MDL_RMECOWV100
     // RM-ECOW-V1.0.0 might have a populated ESP-WROOM-02 module.
     // Disable it, because one might have made MOD_HALL but flash or test another FW variant
@@ -112,17 +144,26 @@ void setup() {
     // which would mess expected processing of those.
     timer_quick = hwtimer(TIM_QUICK, TIM_QUICK_FREQUENCY, timer_quick_callback_wrapper);  // 200Hz (5ms) timer, used for Buttons debouncer and LED- sequences
 
+    // debug
+    Serial.print("Setting up serial to PICO ... ");
+    
     serial_ll.begin(115200);
-
+    
+    Serial.println("Done");
+    
     delay(100);  // Some required stupid delay, dunno why :-/
 
     // "Hi there" and jammed button mounting detection
     do {
         // LED blink to say it's alive
+        Serial.print("Boot anim ... ");
         // (this processing delay is also required to get the debouncer filled with a consistent state (NUM_BUTTON_STATES * 5ms)
         delay(leds.boot_animation() + 500);
+        Serial.println("done");
 
     } while (buttons.is_pressed());
+
+    Serial.println("Setup done");
 }
 
 /**
@@ -186,10 +227,12 @@ void buzzer_program_put_words(PIO pio, unsigned int sm, uint32_t repeat, uint32_
 unsigned int last_button_id = 0;
 unsigned int last_button_cnt;
 void loop() {
+    //Serial.println("loop"); delay(100);
     // Scan the buttons in the same order as original OM FW does
     for (auto const &it : buttons.kBtnDefByNumMap)  // Loop over Button-Num -> button pin map
     {
         uint32_t start = millis();  // start press_timeout measurement
+        //Serial.println(it.first);delay(100);
         if (buttons.is_pressed(it.first)) {
             if (it.first != last_button_id)
                 last_button_cnt = 0;
@@ -223,13 +266,35 @@ void loop() {
         }
     }
 
-#ifdef YARDFORCE_ABC_HATCH_HPP
+    // Serial.println("1");
+    
+    #ifdef YARDFORCE_ABC_HATCH_HPP
     hatch.process_queued();
-#endif
+    #endif
+    
+    // Serial.println("2");
+    // display "ROS waiting animation"
+    #ifndef USBD_USE_CDC
+    if ( ! first_byte_recv ) {
+        delay(leds.KITT_animation() + 250);
+    }
+    #endif
 
     // Backside LED alive blink
     if (millis() > alive_cycle_next) {
         alive_cycle_next = millis() + ALIVE_CYCLE_MILLIS;
         leds.toggle(LED_NUM_REAR);
+        #ifdef USBD_USE_CDC
+        if ( leds.get(LED_NUM_REAR) == LED_state::LED_on ) {
+            // testing
+            uint8_t emerg_s = emergency.get_state();
+            Serial.printf("Emergenxy state %d\n", emerg_s);
+        }
+        #endif
     }
+
+    // if ( millis() % 1000 == 0 ) {
+    //     Serial.println(".");
+    // }
+
 }
